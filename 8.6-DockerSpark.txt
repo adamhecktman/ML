@@ -1,0 +1,48 @@
+#----------------------------------
+#Docker PySpark Jupyter Container
+#----------------------------------
+
+#Download Spark notebook image  
+docker pull jupyter/pyspark-notebook
+
+#Create and run a spark notebook container		
+docker run --name "sparknb" -it -p 8888:8888 -p 4040:4040 jupyter/pyspark-notebook
+
+#Navigate to URL(s) below
+#http://localhost:8888/tree
+#OR
+#http://192.168.99.100:8888/tree
+
+#Copy some data from host data folder into container		
+docker cp T:\\data\\chicago-food-inspections\\food-inspections.csv sparknb:/home/jovyan/work
+
+#Copy a jar file into container
+docker cp C:\Downloads\graphframes-0.7.0-spark2.4-s_2.11.jar sparknb:/usr/local/spark/jars
+
+#Run bash command line inside container
+#Use a different Docker terminal window
+docker exec -i -t sparknb /bin/bash
+
+#list files inside container bash
+ls
+
+#find sparks installation location
+whereis spark
+
+#list Spark notebooks running to get their login token
+jupyter notebook list
+
+#Upload Pyspark notebooks or..
+
+#Read file inside PySpark Notebook
+>>>>>>>
+!ls ../../../
+
+from pyspark.sql import SparkSession
+spark = SparkSession \
+    .builder \
+    .appName("SparkTest") \
+    .getOrCreate()
+    
+df = spark.read.csv("food-inspections.csv", header=True)
+df.show(5)
